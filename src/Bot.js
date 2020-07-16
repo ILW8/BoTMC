@@ -30,6 +30,7 @@ module.exports = class Bot extends Client
         {
             this.on(name, (...args) => func(...args, this));
         }
+        this.on('rateLimit', (rateLimitInfo) => console.log(rateLimitInfo))
     }
 
     /**

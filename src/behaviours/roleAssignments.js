@@ -35,6 +35,18 @@ const actions = {
                         `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
     },
+    "ADDROLEONLY": (collector, triggered_event, u, option) => {
+        triggered_event === "collect" ?
+            collector.message.guild.members.fetch(u.id).then((guild_member) => {
+                if (!guild_member.roles.cache.has(option["roleID"])) {
+                    guild_member.roles.add(option["roleID"]).then(
+                        () => console.log(`Added ${guild_member.roles.guild.roles.resolve(option["roleID"]).name} to ` +
+                            `${guild_member.user.username}#${guild_member.user.discriminator}`))
+                }
+            })
+            :
+            {}
+    },
     "WEIRDCHAMP": (collector, triggered_event, u, option) => {
         triggered_event === "collect" ?
             u.createDM().then((dmchannel) => {
