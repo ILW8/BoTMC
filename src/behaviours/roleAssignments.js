@@ -35,6 +35,17 @@ const actions = {
                         `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
     },
+    "WEIRDCHAMP": (collector, triggered_event, u, option) => {
+        triggered_event === "collect" ?
+            u.createDM().then((dmchannel) => {
+
+                dmchannel.send("<:WeirdChamp:591469400817926154>").then(
+                    () => console.log("Sent WeirdChamp")).catch(
+                    () => console.log("Can't send WeirdChamp... WeirdChamp"))
+            })
+            :
+            {}
+    }
 }
 Object.freeze(actions)
 
