@@ -1,13 +1,21 @@
 //placeholder for actual role assignment functions placed here
 
 /**
+ * @typedef EmojiAction
+ * @property {Object.<string, string>} id Discord emoji ID
+ * @property {Object.<string, string>} action Action to take when this emoji is added/removed
+ * @property {Object.<string, Object>} option Options related to action
+ */
+
+/**
  * @typedef MonitoredMessage
  * @property {string} guild_id The guild ID
  * @property {string} chn_id The channel ID
  * @property {string} msg_id The message ID
- * @property {Array.<string>} emoji_IDs IDs of the reactions (emojis) to be monitored
+ * @property {Array.<EmojiAction>} emoji_IDs IDs of the reactions (emojis) to be monitored
  */
 
+// TODO: don't need to use reactioncollector when only monitoring a single server. Monitor every single react-add event.
 const {ReactionCollector} = require('discord.js')
 const {readFileSync} = require(`fs`);
 
