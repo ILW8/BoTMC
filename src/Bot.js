@@ -37,6 +37,6 @@ module.exports = class Bot extends Client
      */
     login(token)
     {
-        super.login(token || this.config.token);
+        return super.login(token || this.config.token);
     }
 }
