@@ -4,9 +4,9 @@ module.exports = class Bot extends Client
 {
     constructor(config)
     {
-        super(config.clientOptions);
+        super(config["clientOptions"]);
         this.config = config;
-        this.eventHandlers;
+        this.eventHandlers = undefined;
         this.loadHandlers();
     }
 
@@ -19,9 +19,16 @@ module.exports = class Bot extends Client
         }
     }
 
-    login()
+    login(token)
     {
         console.log(this.eventHandlers);
-        super.login(this.config.token);
+        if(token === undefined)
+        {
+            return super.login(token);
+        }
+        else
+        {
+            return super.login(this.config.token);
+        }
     }
 }
