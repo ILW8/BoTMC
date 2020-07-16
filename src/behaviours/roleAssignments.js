@@ -24,11 +24,15 @@ const actions = {
     "SETROLE": (collector, triggered_event, u, option) => {
         triggered_event === "collect" ?
             collector.message.guild.members.fetch(u.id).then((guild_member) => {
-                guild_member.roles.add(option["roleID"]).then(() => console.log("added role"))
+                guild_member.roles.add(option["roleID"]).then(
+                    () => console.log(`Added ${guild_member.roles.guild.roles.resolve(option["roleID"]).name} to ` +
+                    `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
             :
             collector.message.guild.members.fetch(u.id).then((guild_member) => {
-                guild_member.roles.remove(option["roleID"]).then(() => console.log("added role"))
+                guild_member.roles.remove(option["roleID"]).then(
+                    () => console.log(`Removed ${guild_member.roles.guild.roles.resolve(option["roleID"]).name} to ` +
+                    `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
     },
 }
@@ -56,13 +60,15 @@ function get_reactions_collector(client, monitored_message) {
         monitored_message.chn_id).messages.fetch(
         monitored_message.msg_id).then(
         (channel_message) => {
-            let react_filter = (identifier) => {
-                return identifier.emoji.identifier in monitored_message.emoji_IDs
-            }
-            let collector = new ReactionCollector(channel_message, react_filter, {dispose: true});
+            let collector = new ReactionCollector(channel_message,
+                (identifier) => {
+                    return identifier.emoji.identifier in monitored_message.emoji_IDs
+                },
+                {dispose: true});
+
             for (let emojiActionKey in monitored_message.emoji_IDs) {
                 if (monitored_message.emoji_IDs.hasOwnProperty(emojiActionKey)) {
-                    attach_event_listeners(collector, monitored_message.emoji_IDs.emojiActionKey)
+                    attach_event_listeners(collector, monitored_message.emoji_IDs[emojiActionKey])
                 }
             }
             return collector;
