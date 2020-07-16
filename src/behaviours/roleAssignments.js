@@ -1,5 +1,3 @@
-//placeholder for actual role assignment functions placed here
-
 /**
  * @typedef EmojiAction
  * @property {Object.<string, string>} identifier Discord emoji identifier
@@ -17,10 +15,40 @@
  * @property {Object.<string, EmojiAction>} emoji_IDs Object emoji_id: EmojiAction
  */
 
-// TODO: don't need to use reactioncollector when only monitoring a single server. Monitor every single react-add event.
 const {ReactionCollector} = require('discord.js')
 const {readFileSync} = require(`fs`);
 
+// There is only one action for now, but actions can be expanded by adding functions to this enum
+// This can also be moved into a separate file
+const actions = {
+    "SETROLE": (collector, triggered_event, u, option) => {
+        triggered_event === "collect" ?
+            collector.message.guild.members.fetch(u.id).then((guild_member) => {
+                guild_member.roles.add(option["roleID"]).then(() => console.log("added role"))
+            })
+            :
+            collector.message.guild.members.fetch(u.id).then((guild_member) => {
+                guild_member.roles.remove(option["roleID"]).then(() => console.log("added role"))
+            })
+    },
+}
+Object.freeze(actions)
+
+
+function attach_event_listeners(collector, emojiAction) {
+    collector.on("collect", (r, u) => {
+        let action = actions[emojiAction.action]
+        if (action !== undefined) {
+            action(collector, "collect", u, emojiAction.option)
+        }
+    })
+    collector.on("remove", (r, u) => {
+        let action = actions[emojiAction.action]
+        if (action !== undefined) {
+            action(collector, "remove", u, emojiAction.option)
+        }
+    })
+}
 
 function get_reactions_collector(client, monitored_message) {
     let currentGuild = client.guilds.resolve(monitored_message.guild_id)
@@ -28,40 +56,15 @@ function get_reactions_collector(client, monitored_message) {
         monitored_message.chn_id).messages.fetch(
         monitored_message.msg_id).then(
         (channel_message) => {
-            // let react_filter = () => {
-            //     return true
-            // }
             let react_filter = (identifier) => {
-                // console.log(identifier);
                 return identifier.emoji.identifier in monitored_message.emoji_IDs
             }
             let collector = new ReactionCollector(channel_message, react_filter, {dispose: true});
-            // TODO: make a function to attach appropriate action to a reactions collector instead of this mess
-            collector.on("collect", (r, u) => {
-                let current_EmojiAction = monitored_message.emoji_IDs[r.emoji.identifier]
-                if (current_EmojiAction.action === "setRole") {
-                    currentGuild.members.fetch(u.id).then((member_to_modify) => {
-                        // console.log(member_to_modify.roles)
-                        member_to_modify.roles.add(current_EmojiAction.option.roleID).then(() => {
-                            console.log(`Added role \
-${currentGuild.roles.resolve(current_EmojiAction.option.roleID).name} to \
-${member_to_modify.user.username}#${member_to_modify.user.discriminator}!`)
-                        })
-                    })
+            for (let emojiActionKey in monitored_message.emoji_IDs) {
+                if (monitored_message.emoji_IDs.hasOwnProperty(emojiActionKey)) {
+                    attach_event_listeners(collector, monitored_message.emoji_IDs.emojiActionKey)
                 }
-            })
-            collector.on("remove", (r, u) => {
-                let current_EmojiAction = monitored_message.emoji_IDs[r.emoji.identifier]
-                if (current_EmojiAction.action === "setRole") {
-                    currentGuild.members.fetch(u.id).then((member_to_modify) => {
-                        member_to_modify.roles.remove(current_EmojiAction.option.roleID).then(() => {
-                            console.log(`Removed role \
-${currentGuild.roles.resolve(current_EmojiAction.option.roleID).name} from \
-${member_to_modify.user.username}#${member_to_modify.user.discriminator}!`)
-                        })
-                    })
-                }
-            })
+            }
             return collector;
         },
         (e) => console.log(`Could not get message ${monitored_message.msg_id} from guild ${monitored_message.guild_id}, channel ${monitored_message.chn_id}: ${e}`)
