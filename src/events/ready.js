@@ -1,4 +1,4 @@
 module.exports = (bot) =>
 {
-    console.log("uwu");
+    console.log("BoTMC is online!");
 }
