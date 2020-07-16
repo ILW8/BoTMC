@@ -38,13 +38,7 @@ module.exports = class Bot extends Client
     login(token)
     {
         console.log(this.eventHandlers);
-        if(token === undefined)
-        {
-            return super.login(token);
-        }
-        else
-        {
-            return super.login(this.config.token);
-        }
+        if(token === undefined) { return super.login(this.config.token); }
+        else { return super.login(token); }
     }
 }
