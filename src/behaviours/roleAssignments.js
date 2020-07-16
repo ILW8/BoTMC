@@ -38,30 +38,38 @@ const actions = {
 }
 Object.freeze(actions)
 
-
+/**
+ * Attach all actions from a MonitoredMessage's emojiActions property to a collector
+ * @param collector
+ * @param emojiAction
+ */
 function attach_event_listeners(collector, emojiAction) {
-    collector.on("collect", (r, u) => {
-        let action = actions[emojiAction.action]
-        if (action !== undefined) {
-            action(collector, "collect", u, emojiAction.option)
-        }
-    })
-    collector.on("remove", (r, u) => {
-        let action = actions[emojiAction.action]
-        if (action !== undefined) {
-            action(collector, "remove", u, emojiAction.option)
-        }
-    })
+    let perform_action = actions[emojiAction.action]
+    if (perform_action !== undefined) {
+        collector.on("collect", (r, u) => {
+            perform_action(collector, "collect", u, emojiAction.option)
+        })
+        collector.on("remove", (r, u) => {
+            perform_action(collector, "remove", u, emojiAction.option)
+        })
+    }
 }
 
+/**
+ * Creates a ReactionCollector instance for a MonitoredMessage
+ * @param client Bot client instance.
+ * @param {MonitoredMessage} monitored_message.
+ */
 function get_reactions_collector(client, monitored_message) {
     let currentGuild = client.guilds.resolve(monitored_message.guild_id)
     currentGuild.channels.resolve(
         monitored_message.chn_id).messages.fetch(
         monitored_message.msg_id).then(
-            (channel_message) => {
+        (channel_message) => {
             let collector = new ReactionCollector(channel_message,
-                (identifier) => {return identifier.emoji.identifier in monitored_message.emojiActions},
+                (identifier) => {
+                    return identifier.emoji.identifier in monitored_message.emojiActions
+                },
                 {dispose: true});
 
             for (let emojiActionKey in monitored_message.emojiActions) {
@@ -76,11 +84,17 @@ function get_reactions_collector(client, monitored_message) {
     );
 }
 
+/**
+ * Loads all monitored messages from config file and creates a collector for each message.
+ * @param client Bot client object
+ * @returns {Object.<string, ReactionCollector>} Object indexed by message ID (snowflake) of the message being monitored
+ */
 function create_collectors(client) {
     let collectors = {}
     let monitoredMessages = JSON.parse(readFileSync(`${__dirname}/../../config/monitoredMessages.json`, 'utf8'))
+
     for (let message of monitoredMessages) {
-        console.log(message.msg_id)
+        console.log(`Now monitoring message ${message.msg_id}`)
         collectors[message.msg_id] = get_reactions_collector(client, message);
     }
     return collectors;
