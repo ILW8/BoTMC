@@ -3,14 +3,14 @@
     "guild_id": "562664083439091734",
     "chn_id": "706544212258324510",
     "msg_id": "733228774254182551",
-    "emoji_IDs": [
-      {
-        "id": "1234",
-        "action": "addRole",
+    "emojiActions": {
+      "pepelove:562672789547384833": {
+        "identifier": "pepelove:562672789547384833",
+        "action": "SETROLE",
         "option": {
-          "roleID": "42375982759234852"
+          "roleID": "733346001401675877"
         }
       }
-    ]
+    }
   }
 ]

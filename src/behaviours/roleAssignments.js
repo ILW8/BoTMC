@@ -12,7 +12,7 @@
  * @property {string} guild_id The guild ID
  * @property {string} chn_id The channel ID
  * @property {string} msg_id The message ID
- * @property {Object.<string, EmojiAction>} emoji_IDs Object emoji_id: EmojiAction
+ * @property {Object.<string, EmojiAction>} emojiActions Object emoji_id: EmojiAction
  */
 
 const {ReactionCollector} = require('discord.js')
@@ -26,13 +26,13 @@ const actions = {
             collector.message.guild.members.fetch(u.id).then((guild_member) => {
                 guild_member.roles.add(option["roleID"]).then(
                     () => console.log(`Added ${guild_member.roles.guild.roles.resolve(option["roleID"]).name} to ` +
-                    `${guild_member.user.username}#${guild_member.user.discriminator}`))
+                        `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
             :
             collector.message.guild.members.fetch(u.id).then((guild_member) => {
                 guild_member.roles.remove(option["roleID"]).then(
                     () => console.log(`Removed ${guild_member.roles.guild.roles.resolve(option["roleID"]).name} to ` +
-                    `${guild_member.user.username}#${guild_member.user.discriminator}`))
+                        `${guild_member.user.username}#${guild_member.user.discriminator}`))
             })
     },
 }
@@ -59,20 +59,19 @@ function get_reactions_collector(client, monitored_message) {
     currentGuild.channels.resolve(
         monitored_message.chn_id).messages.fetch(
         monitored_message.msg_id).then(
-        (channel_message) => {
+            (channel_message) => {
             let collector = new ReactionCollector(channel_message,
-                (identifier) => {
-                    return identifier.emoji.identifier in monitored_message.emoji_IDs
-                },
+                (identifier) => {return identifier.emoji.identifier in monitored_message.emojiActions},
                 {dispose: true});
 
-            for (let emojiActionKey in monitored_message.emoji_IDs) {
-                if (monitored_message.emoji_IDs.hasOwnProperty(emojiActionKey)) {
-                    attach_event_listeners(collector, monitored_message.emoji_IDs[emojiActionKey])
+            for (let emojiActionKey in monitored_message.emojiActions) {
+                if (monitored_message.emojiActions.hasOwnProperty(emojiActionKey)) {
+                    attach_event_listeners(collector, monitored_message.emojiActions[emojiActionKey])
                 }
             }
             return collector;
         },
+
         (e) => console.log(`Could not get message ${monitored_message.msg_id} from guild ${monitored_message.guild_id}, channel ${monitored_message.chn_id}: ${e}`)
     );
 }
