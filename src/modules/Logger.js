@@ -3,7 +3,8 @@ const winston = require('winston');
 
 module.exports = class Logger {
     constructor() {
-        this.logger = winston.createLogger({
+        this.instances = {}
+        this.instances["default"] = winston.createLogger({
             level: 'info',
             format: winston.format.json(),
             defaultMeta: {service: 'user-service'},
@@ -37,8 +38,21 @@ module.exports = class Logger {
         }
     }
 
-    getLogger() {
-        return this.logger
+    createLogger(loggerName, loggerOptions)
+    {
+        this.instances[loggerName] = winston.createLogger(loggerOptions)
+    }
+
+    getLoggers() {
+        return this.instances
+    }
+
+    getLogger(loggerName){
+        return this.instances[loggerName]
+    }
+
+    getDefaultLogger(){
+        return this.getLogger("default")
     }
 }
 

@@ -7,7 +7,7 @@ const Bot = require(`${__dirname}/../Bot.js`);
  * @param {User} user
  * @param {Bot} bot
  */
-module.exports = (reaction, user, bot) =>
+module.exports = (bot, reaction, user) =>
 {
     //adds role if added reaction
     bot.reactionCollector.setRole(reaction, user, true)

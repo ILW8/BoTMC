@@ -16,9 +16,9 @@ module.exports = class Bot extends Client
         super(config[`clientOptions`]);
         this.config = config;
         this.eventHandlers = undefined;
+        this.logging = new Logger;
+        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logging.getDefaultLogger());
         this.loadHandlers();
-        this.logger = (new Logger).getLogger();
-        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logger);
     }
 
     /**
@@ -29,7 +29,7 @@ module.exports = class Bot extends Client
         this.eventHandlers = loaddir(`${__dirname}/events`, `.js`);
         for(let event in this.eventHandlers)
         {
-            this.on(event, (...args) => this.eventHandlers[event](...args, this));
+            this.on(event, (...args) => this.eventHandlers[event](this, ...args));
         }
         this.on('rateLimit', (e) => this.logger.warn(`Bot is being rate limitted: ${e}`))
     }

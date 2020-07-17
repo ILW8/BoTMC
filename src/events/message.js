@@ -6,7 +6,7 @@ const Bot = require(`${__dirname}/../Bot`);
  * @param {Message} msg
  * @param {Bot} bot
  */
-module.exports = (msg, bot) =>
+module.exports = (bot, msg) =>
 {
     // console.log(msg.content); //temporary echo to console
 }
