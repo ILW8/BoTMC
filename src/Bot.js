@@ -31,6 +31,7 @@ module.exports = class Bot extends Client
         {
             this.on(event, (...args) => this.eventHandlers[event](...args, this));
         }
+        this.on('rateLimit', (e) => this.logger.warn(`Bot is being rate limitted: ${e}`))
     }
 
     /**
