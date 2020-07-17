@@ -20,10 +20,10 @@ module.exports.loaddir = (path, fileType) =>
 }
 /**
  * Loads a json file into an object and outputs it
- * @param {string} path 
+ * @param {string} path
  */
 module.exports.loadToObject = (path) =>
 {
     if(!existsSync(path)) return console.log(`Invalid file: ${path}`);
-    return JSON.parse(readFileSync(path));
+    return JSON.parse(readFileSync(path, 'utf8'));
 }

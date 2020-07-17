@@ -15,7 +15,7 @@ module.exports = class Bot extends Client
     {
         super(config[`clientOptions`]);
         this.config = config;
-        this.eventHandlers;
+        this.eventHandlers = undefined;
         this.loadHandlers();
         this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`));
     }
@@ -37,6 +37,6 @@ module.exports = class Bot extends Client
      */
     login(token)
     {
-        super.login(token || this.config.token);
+        return super.login(token || this.config["token"]);
     }
 }
