@@ -1,11 +1,10 @@
-const { Client, ClientOptions } = require(`discord.js`);
-const { loaddir } = require(`${__dirname}/util.js`);
-/**
- * @typedef BotOptions
- * @property {string} token The bot's token
- * @property {Object} clientOptions The options for the Discord.js Client
- */
+const { Client } = require(`discord.js`);
+const { loaddir, loadToObject } = require(`${__dirname}/util.js`);
+const { Logger, ReactionCollector } = loaddir(`${__dirname}/modules`, `.js`);
 
+/**
+ * An extension to Discord.js Client with modules loaded from ~/src/modules
+ */
 module.exports = class Bot extends Client
 {
     /**
@@ -14,10 +13,11 @@ module.exports = class Bot extends Client
      */
     constructor(config)
     {
-        super(config["clientOptions"]);
+        super(config[`clientOptions`]);
         this.config = config;
-        this.eventHandlers = undefined;
+        this.eventHandlers;
         this.loadHandlers();
+        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`));
     }
 
     /**
@@ -26,9 +26,9 @@ module.exports = class Bot extends Client
     loadHandlers()
     {
         this.eventHandlers = loaddir(`${__dirname}/events`, `.js`);
-        for(let [name, func] of this.eventHandlers)
+        for(let event in this.eventHandlers)
         {
-            this.on(name, (...args) => func(...args, this));
+            this.on(event, (...args) => this.eventHandlers[event](...args, this));
         }
     }
 
