@@ -23,7 +23,7 @@ module.exports = class Logger {
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
         if (process.env.NODE_ENV !== 'production') {
-            this.logger.add(new winston.transports.Console({
+            this.instances["default"].add(new winston.transports.Console({
                 format: winston.format.combine(
                     winston.format.colorize(),
                     winston.format.timestamp(),
