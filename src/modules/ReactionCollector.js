@@ -19,10 +19,21 @@ module.exports = class ReactionCollector {
         //if message not listed, exit
         if (!this[messageIDTrace]) return;
 
-        let roles = reaction.message.guild.member(user).roles,
+        let roles, mappedRole = undefined
+        try
+        {
+            roles = reaction.message.guild.fetch(user).roles
+
             //split(":").slice(-1).pop() returns substring starting from the last colon in the string, or the whole
             //string if the string doesn't have a colon in it. To handle the fact that unicode emojis don't have an id.
             mappedRole = this[messageIDTrace][reaction.emoji.identifier.split(":").slice(-1).pop()];
+        }
+        catch (TypeError)
+        {
+            this.logger.warn(`Could not fetch ${user.username}#${user.discriminator} (${user.id}), skipping.`)
+            return;
+        }
+
 
         //if reaction not listed, remove reaction
         if (!mappedRole) {
