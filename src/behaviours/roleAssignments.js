@@ -89,11 +89,16 @@ function get_reactions_collector(client, monitored_message) {
         monitored_message.chn_id).messages.fetch(
         monitored_message.msg_id).then(
         (channel_message) => {
-            let collector = new ReactionCollector(channel_message,
-                (identifier) => {
-                    return identifier.emoji.identifier in monitored_message.emojiActions
+            let collector = channel_message.createReactionCollector(
+                (reaction) => {
+                    if (reaction.emoji.identifier in monitored_message.emojiActions) {
+                        return true
+                    } else {
+                        reaction.remove()
+                    }
                 },
-                {dispose: true});
+                {dispose: true}
+            );
 
             for (let emojiActionKey in monitored_message.emojiActions) {
                 if (monitored_message.emojiActions.hasOwnProperty(emojiActionKey)) {
