@@ -1,0 +1,7 @@
+{
+    "[guildID1]:[channelID1]:[messageID1]" :
+    {
+        "[emoteID1]" : "[roleID1]['!' if add-only role]",
+        "[emoteID2]" : "[roleID2]"
+    }
+}
