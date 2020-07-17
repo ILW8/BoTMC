@@ -5,8 +5,11 @@ module.exports = class ReactionCollector {
     /**
      * Creates new ReactionCollector from a JSON config file. Check ~/config/samples/reactionCollectorConfig_sample.json for a template
      * @param {Object} collectorConfig
+     * @param logger
      */
-    constructor(collectorConfig) {
+    constructor(collectorConfig, logger) {
+        this.logger = logger.child({ moduleLabel: "ReactionCollector" });  // https://github.com/winstonjs/winston/pull/1598
+        this.logger.defaultMeta["moduleLabel"] = "ReactionCollector"
         Object.assign(this, collectorConfig);
     }
 
@@ -29,12 +32,12 @@ module.exports = class ReactionCollector {
 
         //else add/remove role
         if (add) {
-            roles.add(roleID).then(  //might want to disable logging once everyone floods in
-                () => console.log(`added ${roleID} to ${user.username}#${user.discriminator}`)
+            roles.add(roleID).then(
+                () => this.logger.info(`Added ${roleID} to ${user.username}#${user.discriminator}`)
             );
         } else if (!addOnly) {
             roles.remove(roleID).then(
-                () => console.log(`removed ${roleID} from ${user.username}#${user.discriminator}`)
+                () => this.logger.info(`Removed ${roleID} from ${user.username}#${user.discriminator}`)
             );
         }
     }

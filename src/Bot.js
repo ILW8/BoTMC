@@ -17,7 +17,8 @@ module.exports = class Bot extends Client
         this.config = config;
         this.eventHandlers = undefined;
         this.loadHandlers();
-        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`));
+        this.logger = (new Logger).getLogger();
+        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logger);
     }
 
     /**
