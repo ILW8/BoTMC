@@ -14,7 +14,7 @@ module.exports = class ReactionCollector
 
     setRole(reaction, user, add)
     {
-        
+        //guildID:channelID:messageID
         let messageIDTrace = `${reaction.message.guild.id}:${reaction.message.channel.id}:${reaction.message.id}`;
         //if message not listed, exit
         if(!this[messageIDTrace]) return;
@@ -22,9 +22,17 @@ module.exports = class ReactionCollector
             mappedRole = this[messageIDTrace][reaction.emoji.id];
 
         //if reaction not listed, remove reaction
-        if(!mappedRole) reaction.remove();
+        if(!mappedRole)
+        {
+            reaction.remove();
+            return;
+        }
+        //an `!` is added to the end of roles that are add-only
+        let addOnly = mappedRole.endsWith(`!`),
+        roleID = mappedRole.slice(0,-1);
+
         //else add/remove role
-        else if(add) roles.add(mappedRole);
-        else roles.remove(mappedRole);
+        if(add) roles.add(roleID);
+        else if(!addOnly) roles.remove(roleID);
     }
 }
