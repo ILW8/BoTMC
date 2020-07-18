@@ -1,6 +1,6 @@
 const { Client } = require(`discord.js`);
 const { loaddir, loadToObject } = require(`${__dirname}/util.js`);
-const { Logger, ReactionCollector, MessageCollector } = loaddir(`${__dirname}/modules`, `.js`);
+const { Logger, ReactionCollector, MessageCollector, MessageFilter } = loaddir(`${__dirname}/modules`, `.js`);
 
 /**
  * An extension to Discord.js Client with modules loaded from ~/src/modules
@@ -17,8 +17,10 @@ module.exports = class Bot extends Client
         this.config = config;
         this.eventHandlers = undefined;
         this.logging = new Logger;
-        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logging.getDefaultLogger());
+        this.logger = this.logging.getDefaultLogger()
+        this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logger);
         this.messageCollector = new MessageCollector(this)
+        this.messageFilter = new MessageFilter(this)
         this.loadHandlers();
     }
 
