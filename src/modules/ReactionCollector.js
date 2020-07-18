@@ -22,37 +22,35 @@ module.exports = class ReactionCollector {
         let roles, mappedRole = undefined
         try
         {
-            roles = reaction.message.guild.fetch(user).roles
+            roles = reaction.message.guild.members.resolve(user).roles
 
             //split(":").slice(-1).pop() returns substring starting from the last colon in the string, or the whole
             //string if the string doesn't have a colon in it. To handle the fact that unicode emojis don't have an id.
             mappedRole = this[messageIDTrace][reaction.emoji.identifier.split(":").slice(-1).pop()];
+
+            //if reaction not listed, remove reaction
+            if (!mappedRole) {
+                reaction.remove();
+                return;
+            }
+            //an `!` is added to the end of roles that are add-only
+            let addOnly = mappedRole.endsWith(`!`);
+            let roleID = addOnly ? mappedRole.slice(0, -1) : mappedRole;
+
+            //else add/remove role
+            if (add) {
+                roles.add(roleID).then(
+                    () => this.logger.info(`Added ${roleID} to ${user.username}#${user.discriminator}`)
+                );
+            } else if (!addOnly) {
+                roles.remove(roleID).then(
+                    () => this.logger.info(`Removed ${roleID} from ${user.username}#${user.discriminator}`)
+                );
+            }
         }
         catch (TypeError)
         {
             this.logger.warn(`Could not fetch ${user.username}#${user.discriminator} (${user.id}), skipping.`)
-            return;
-        }
-
-
-        //if reaction not listed, remove reaction
-        if (!mappedRole) {
-            reaction.remove();
-            return;
-        }
-        //an `!` is added to the end of roles that are add-only
-        let addOnly = mappedRole.endsWith(`!`);
-        let roleID = addOnly ? mappedRole.slice(0, -1) : mappedRole;
-
-        //else add/remove role
-        if (add) {
-            roles.add(roleID).then(
-                () => this.logger.info(`Added ${roleID} to ${user.username}#${user.discriminator}`)
-            );
-        } else if (!addOnly) {
-            roles.remove(roleID).then(
-                () => this.logger.info(`Removed ${roleID} from ${user.username}#${user.discriminator}`)
-            );
         }
     }
 }
