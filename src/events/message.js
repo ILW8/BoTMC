@@ -10,4 +10,5 @@ module.exports = (bot, msg) =>
 {
     // console.log(msg.content); //temporary echo to console
     bot.messageCollector.logMessage(msg)
+    bot.messageFilter.filterMessage(msg)
 }

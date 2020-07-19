@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Alyrii/BoTMC#readme",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "get-urls": "^9.2.1",
     "winston": "^3.3.3"
   }
 }
