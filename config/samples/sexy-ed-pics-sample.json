@@ -1,0 +1,16 @@
+{
+  "channels": [
+    "733045919548702780:734064256869204018"
+  ],
+  "allowedContent": {
+    "attachments": {
+      "media": true,
+      "files": false
+    },
+    "embeds": {
+      "image": true,
+      "video": true
+    },
+    "textOnly": false
+  }
+}
