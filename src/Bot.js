@@ -20,7 +20,7 @@ module.exports = class Bot extends Client
         this.logger = this.logging.getDefaultLogger()
         this.reactionCollector = new ReactionCollector(loadToObject(`${__dirname}/../config/reactionCollectorConfig.json`), this.logger);
         this.messageCollector = new MessageCollector(this)
-        this.messageFilter = new MessageFilter(this, `${__dirname}/../config/contentFilters/`)
+        this.messageFilter = new MessageFilter(`${__dirname}/../config/contentFilters/`, this.logger)
         this.loadHandlers();
     }
 
