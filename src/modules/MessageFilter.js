@@ -23,6 +23,12 @@ module.exports = class MessageFilter {
 
     filterMessage(message) {
         let waitForEmbedTimeout = 4000
+
+        // if `guild` property is not defined, then it was a DM to the bot.
+        if (message.guild === null) {
+            return;
+        }
+
         for (let [channelName, filterOptions] of Object.entries(this.filters)) {
             let channelIDTrace = `${message.guild.id}:${message.channel.id}`
             if (filterOptions.channels.includes(channelIDTrace)) {
