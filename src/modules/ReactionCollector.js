@@ -16,10 +16,15 @@ module.exports = class ReactionCollector {
     setRole(reaction, user, add) {
         //guildID:channelID:messageID
         let messageIDTrace = `${reaction.message.guild.id}:${reaction.message.channel.id}:${reaction.message.id}`;
+        if(messageIDTrace.includes("undefined") || messageIDTrace.includes("null"))
+        {
+            this.logger.warn(`Could not generate messageIDTrace for ${user.username}#${user.discriminator} (${user.id}), skipping.`)
+            return;
+        }
+
         //if message not listed, exit
         if (!this[messageIDTrace])
         {
-            this.logger.warn(`Could not generate messageIDTrace for ${user.username}#${user.discriminator} (${user.id}), skipping. `)
             return;
         }
 
