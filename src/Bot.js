@@ -34,7 +34,9 @@ module.exports = class Bot extends Client
         {
             this.on(event, (...args) => this.eventHandlers[event](this, ...args));
         }
-        this.on('rateLimit', (e) => this.logger.warn(`Bot is being rate limitted: ${e}`))
+        this.on('rateLimit', (e) => {
+            this.logger.warn(`Bot is being rate limitted on route ${e.route}: waiting ${e.timeout}ms`)
+        })
     }
 
     /**
